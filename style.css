@@ -1,83 +1,110 @@
 body {
+    background-color: #f0f2f5;
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 900px;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    font-weight: bold;
     color: #333;
-    line-height: 1.6;
-    padding: 20px;
 }
 
-h1, h2 {
-    color: #007BFF;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-section {
-    background: #fff;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-form div {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
+h1 {
+    color: #007bff;
     font-weight: bold;
 }
 
-input[type="text"],
-input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Assure que le padding n'affecte pas la largeur totale */
+/* Style des boutons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
 }
 
-button[type="submit"] {
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-success {
     background-color: #28a745;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border-color: #28a745;
 }
 
-button[type="submit"]:hover {
+.btn-success:hover {
     background-color: #218838;
+    border-color: #1e7e34;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Style du tableau */
+.table {
     margin-top: 20px;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-.delete-btn {
-    background-color: #dc3545;
+.table thead th {
+    background-color: #007bff;
     color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
+    border-bottom: 2px solid #dee2e6;
 }
 
-.delete-btn:hover {
-    background-color: #c82333;
+.table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Classes pour le statut d'expiration */
+.alert-date-expired {
+    font-weight: bold;
+    color: #dc3545;
+}
+
+.alert-date-approaching {
+    font-weight: bold;
+    color: #ffc107;
+}
+
+.alert-date-valid {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }

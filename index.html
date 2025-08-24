@@ -3,37 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion de Parc Automobile</title>
+    <title>Tableau de bord Superviseur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" >
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Mon Parc Automobile</h1>
-    
-    <section>
-        <h2>Ajouter un nouveau véhicule</h2>
-        <form id="add-car-form">
-    <div>
-        <label for="brand">Marque :</label>
-        <input type="text" id="brand" required>
-    </div>
-    <div>
-        <label for="model">Modèle :</label>
-        <input type="text" id="model" required>
-    </div>
-    <div>
-        <label for="year">Année :</label>
-        <input type="number" id="year" required>
-    </div>
-    <button type="submit">Ajouter le véhicule</button>
-</form>
-    </section>
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Tableau de bord Superviseur</h1>
+            <button class="btn btn-outline-danger" onclick="logout()">Déconnexion</button>
+        </div>
+        
+        <div id="message-container" class="alert d-none"></div>
 
-    <section>
-        <h2>Liste des véhicules</h2>
-        <div id="cars-list">
+        <section id="menu-grid" class="mt-4">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card p-4 shadow-sm h-100 menu-card" data-target="add-truck-section">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Ajouter un camion</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4 shadow-sm h-100 menu-card" data-target="add-driver-section">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Ajouter un chauffeur</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4 shadow-sm h-100 menu-card" data-target="trucks-list-section">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Liste des camions</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4 shadow-sm h-100 menu-card" data-target="drivers-list-section">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Liste des chauffeurs</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4 shadow-sm h-100 menu-card" data-target="assign-section">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Attribuer un camion</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
-<script src="js/main.js"></script>
-    </body>
+
+        <section id="add-truck-section" class="card p-4 shadow-sm mb-4 d-none">
+            <h2 class="card-title">Ajouter un nouveau camion</h2>
+            <form id="add-truck-form">
+                <div class="mb-3">
+                    <label for="truck-model" class="form-label">Modèle :</label>
+                    <input type="text" id="truck-model" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="truck-capacity" class="form-label">Capacité (en tonnes) :</label>
+                    <input type="number" id="truck-capacity" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="truck-licence" class="form-label">Plaque d'immatriculation :</label>
+                    <input type="text" id="truck-licence" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="technical-inspection-date" class="form-label">Date d'échéance de la visite technique :</label>
+                    <input type="date" id="technical-inspection-date" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="insurance-date" class="form-label">Date d'échéance de l'assurance :</label>
+                    <input type="date" id="insurance-date" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="truck-document" class="form-label">Document affilié :</label>
+                    <input type="file" id="truck-document" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success w-100">Ajouter le camion</button>
+            </form>
+            <button class="btn btn-secondary mt-3" onclick="showSection('menu-grid')">Retour au menu</button>
+        </section>
+
+        <section id="add-driver-section" class="card p-4 shadow-sm mb-4 d-none">
+            <h2 class="card-title">Ajouter un nouveau chauffeur</h2>
+            <form id="add-driver-form">
+                <div class="mb-3">
+                    <label for="driver-name" class="form-label">Nom du chauffeur :</label>
+                    <input type="text" id="driver-name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="driver-licence" class="form-label">Permis de conduire :</label>
+                    <input type="text" id="driver-licence" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-info w-100">Ajouter le chauffeur</button>
+            </form>
+            <button class="btn btn-secondary mt-3" onclick="showSection('menu-grid')">Retour au menu</button>
+        </section>
+
+        <section id="assign-section" class="card p-4 shadow-sm mb-4 d-none">
+            <h2 class="card-title">Attribuer un camion à un chauffeur</h2>
+            <form id="assign-form">
+                <div class="mb-3">
+                    <label for="truck-select" class="form-label">Sélectionner un camion :</label>
+                    <select id="truck-select" class="form-select" required></select>
+                </div>
+                <div class="mb-3">
+                    <label for="driver-select" class="form-label">Sélectionner un chauffeur :</label>
+                    <select id="driver-select" class="form-select" required></select>
+                </div>
+                <button type="submit" class="btn btn-secondary w-100">Attribuer le camion</button>
+            </form>
+            <button class="btn btn-secondary mt-3" onclick="showSection('menu-grid')">Retour au menu</button>
+        </section>
+
+        <section id="drivers-list-section" class="card p-4 shadow-sm mb-4 d-none">
+            <h2 class="card-title">Liste des chauffeurs</h2>
+            <div id="drivers-list">
+                </div>
+            <button class="btn btn-secondary mt-3" onclick="showSection('menu-grid')">Retour au menu</button>
+        </section>
+
+        <section id="trucks-list-section" class="card p-4 shadow-sm d-none">
+            <h2 class="card-title">Liste des camions</h2>
+            <div id="trucks-list">
+                </div>
+            <button class="btn btn-secondary mt-3" onclick="showSection('menu-grid')">Retour au menu</button>
+        </section>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        function logout() {
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
 </html>
