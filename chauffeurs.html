@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des chauffeurs - Superviseur</title>
+    <!-- Chargement de la police 'Inter' depuis Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chargement de Tailwind CSS pour un style moderne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Modal overlay to cover the background */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        /* Hidden by default */
+        .hidden {
+            display: none;
+        }
+
+        /* Custom message box for alerts */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3B82F6;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .message-box.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 antialiased text-gray-800">
+
+    <!-- Main container with background image and overlay -->
+    <div class="min-h-screen bg-cover bg-center flex items-center justify-center p-4" style="background-image: url('camion.jpeg');">
+        
+        <!-- Semi-transparent overlay for better content readability -->
+        <div class="absolute inset-0 bg-black opacity-60 backdrop-blur-sm"></div>
+
+        <!-- Content container -->
+        <div class="relative w-full max-w-4xl bg-white/20 backdrop-blur-md rounded-xl shadow-2xl p-8">
+            <!-- Header section with back button -->
+            <div class="flex justify-between items-center mb-6">
+                <a href="index.html" class="flex items-center text-white/80 hover:text-white transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Retour
+                </a>
+                <h1 class="text-3xl font-bold text-white drop-shadow-md flex-grow text-center">
+                    Gestion des chauffeurs
+                </h1>
+                <div class="w-16"></div> <!-- Spacer to align the title -->
+            </div>
+            
+            <!-- Add Driver button -->
+            <div class="flex justify-end mb-6">
+                <button id="add-driver-button" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                    Ajouter un chauffeur
+                </button>
+            </div>
+
+            <!-- Driver list section -->
+            <div class="overflow-x-auto bg-white/30 rounded-xl p-6 shadow-md">
+                <table class="min-w-full text-white table-auto">
+                    <thead>
+                        <tr class="text-left font-semibold border-b border-white/40">
+                            <th class="py-2 px-4">Nom</th>
+                            <th class="py-2 px-4">Contact</th>
+                            <th class="py-2 px-4">Permis</th>
+                            <th class="py-2 px-4">Véhicule assigné</th>
+                            <th class="py-2 px-4 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driver-table-body">
+                        <!-- Driver rows will be dynamically inserted here -->
+                        <!-- A placeholder for loading state -->
+                        <tr><td colspan="5" class="text-center py-4">Chargement des chauffeurs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Driver Modal Form -->
+    <div id="driver-modal" class="modal-overlay hidden">
+        <div class="relative w-full max-w-lg bg-white/30 backdrop-blur-lg rounded-xl shadow-2xl p-8">
+            <h2 id="modal-title" class="text-2xl font-bold text-white text-center mb-6">Ajouter un nouveau chauffeur</h2>
+            
+            <form id="driver-form" class="space-y-4">
+                <input type="hidden" id="driver-id">
+                
+                <!-- Nom -->
+                <div>
+                    <label for="driver-name" class="block text-sm font-medium text-white mb-1">Nom du chauffeur</label>
+                    <input type="text" id="driver-name" name="name" required class="w-full px-3 py-2 rounded-lg bg-white/30 border border-white/50 focus:outline-none focus:ring-2 focus:ring-sky-500 text-white placeholder-gray-200">
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <label for="driver-contact" class="block text-sm font-medium text-white mb-1">Numéro de téléphone</label>
+                    <input type="tel" id="driver-contact" name="contact" class="w-full px-3 py-2 rounded-lg bg-white/30 border border-white/50 focus:outline-none focus:ring-2 focus:ring-sky-500 text-white placeholder-gray-200">
+                </div>
+                
+                <!-- Date d'expiration du permis -->
+                <div>
+                    <label for="license-expiration-date" class="block text-sm font-medium text-white mb-1">Date d'expiration du permis</label>
+                    <input type="date" id="license-expiration-date" name="license-date" required class="w-full px-3 py-2 rounded-lg bg-white/30 border border-white/50 focus:outline-none focus:ring-2 focus:ring-sky-500 text-white placeholder-gray-200">
+                </div>
+
+                <!-- Véhicule assigné -->
+                <div>
+                    <label for="assigned-vehicle" class="block text-sm font-medium text-white mb-1">Véhicule assigné</label>
+                    <select id="assigned-vehicle" name="assignedVehicleId" class="w-full px-3 py-2 rounded-lg bg-white/30 border border-white/50 focus:outline-none focus:ring-2 focus:ring-sky-500 text-white placeholder-gray-200">
+                        <option value="">-- Aucun --</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" id="cancel-add-button" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submit-button" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                        Ajouter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay hidden">
+        <div class="relative w-full max-w-sm bg-white/30 backdrop-blur-lg rounded-xl shadow-2xl p-8 text-center">
+            <h2 class="text-xl font-bold text-white mb-4">Confirmer la suppression</h2>
+            <p class="text-white mb-6">Êtes-vous sûr de vouloir supprimer ce chauffeur ? Cette action est irréversible.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancel-delete-button" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300">
+                    Annuler
+                </button>
+                <button id="confirm-delete-button" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message box for user feedback -->
+    <div id="message-box" class="message-box"></div>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Message box utility
+        function showMessage(message) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.classList.add('visible');
+            setTimeout(() => {
+                messageBox.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Initialize Firebase
+        let db, auth, driversCollection, vehiclesCollection, userId, allVehicles = [];
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // Function to sign in and fetch data
+        async function signInAndFetch() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                // Firestore collection paths
+                driversCollection = collection(db, `artifacts/${appId}/users/${userId}/drivers`);
+                vehiclesCollection = collection(db, `artifacts/${appId}/users/${userId}/vehicles`);
+                
+                // Set up real-time listeners for both collections
+                onSnapshot(vehiclesCollection, (snapshot) => {
+                    allVehicles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    populateVehicleSelect(allVehicles);
+                    // Re-render drivers after fetching vehicles
+                    onSnapshot(driversCollection, (snapshot) => {
+                        const drivers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        renderDrivers(drivers);
+                    });
+                }, (error) => {
+                    console.error("Error fetching vehicles: ", error);
+                    showMessage("Erreur de chargement des véhicules.");
+                });
+                
+            } catch (error) {
+                console.error("Authentication or Firestore setup error:", error);
+                showMessage("Erreur de connexion à la base de données.");
+            }
+        }
+        
+        // Helper function to get expiration status and visual representation
+        function getExpirationStatus(dateString) {
+            const today = new Date();
+            const expirationDate = new Date(dateString);
+            const diffTime = expirationDate.getTime() - today.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays <= 0) {
+                return { 
+                    statusText: 'Expiré', 
+                    statusClass: 'text-red-400', 
+                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>`
+                };
+            } else if (diffDays <= 30) {
+                return {
+                    statusText: 'Expire bientôt',
+                    statusClass: 'text-orange-400',
+                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.5-1.79 1.732-3.04L13.732 3.96c-.77-1.25-2.694-1.25-3.464 0L3.34 16.96c-.77 1.25.193 3.04 1.732 3.04z" />
+                              </svg>`
+                };
+            } else {
+                return {
+                    statusText: 'Valide',
+                    statusClass: 'text-green-400',
+                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>`
+                };
+            }
+        }
+
+        // Function to populate the vehicle select dropdown
+        function populateVehicleSelect(vehicles) {
+            const select = document.getElementById('assigned-vehicle');
+            select.innerHTML = '<option value="">-- Aucun --</option>'; // Reset dropdown
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle.id;
+                option.textContent = `${vehicle.brand} ${vehicle.model} (${vehicle.plate})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Function to render drivers in the table
+        function renderDrivers(drivers) {
+            const tbody = document.getElementById('driver-table-body');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (drivers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Aucun chauffeur trouvé.</td></tr>`;
+                return;
+            }
+
+            drivers.forEach(driver => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white/20 hover:bg-white/10 transition-colors duration-200';
+                
+                const licenseStatus = getExpirationStatus(driver['license-date']);
+                const assignedVehicle = allVehicles.find(v => v.id === driver.assignedVehicleId);
+                const vehicleDisplay = assignedVehicle ? `${assignedVehicle.brand} ${assignedVehicle.model}` : 'Non assigné';
+
+                row.innerHTML = `
+                    <td class="py-2 px-4">${driver.name}</td>
+                    <td class="py-2 px-4">${driver.contact || 'N/A'}</td>
+                    <td class="py-2 px-4 ${licenseStatus.statusClass} flex items-center">${driver['license-date']}${licenseStatus.iconSvg}</td>
+                    <td class="py-2 px-4">${vehicleDisplay}</td>
+                    <td class="py-2 px-4 text-center flex items-center justify-center">
+                        <button onclick="editDriver('${driver.id}')" class="text-white/80 hover:text-white transition-colors duration-200 mr-2">Modifier</button>
+                        <button onclick="showDeleteModal('${driver.id}')" class="text-rose-400 hover:text-rose-500 transition-colors duration-200">Supprimer</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // --- Modal and Form Logic ---
+        const driverModal = document.getElementById('driver-modal');
+        const driverForm = document.getElementById('driver-form');
+        const modalTitle = document.getElementById('modal-title');
+        const driverIdInput = document.getElementById('driver-id');
+        const assignedVehicleSelect = document.getElementById('assigned-vehicle');
+        const submitButton = document.getElementById('submit-button');
+        
+        // Delete Modal Elements
+        const deleteModal = document.getElementById('delete-modal');
+        const confirmDeleteButton = document.getElementById('confirm-delete-button');
+        const cancelDeleteButton = document.getElementById('cancel-delete-button');
+
+        // Open modal for adding a new driver
+        document.getElementById('add-driver-button').addEventListener('click', () => {
+            modalTitle.textContent = 'Ajouter un nouveau chauffeur';
+            submitButton.textContent = 'Ajouter';
+            driverForm.reset();
+            driverIdInput.value = ''; // Clear ID for new entry
+            assignedVehicleSelect.value = '';
+            driverModal.classList.remove('hidden');
+        });
+
+        // Handle form submission
+        driverForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showMessage('Opération en cours...');
+
+            const formData = new FormData(driverForm);
+            const driverData = Object.fromEntries(formData.entries());
+            
+            const docId = driverIdInput.value;
+
+            try {
+                if (docId) {
+                    // Update existing driver
+                    const docRef = doc(driversCollection, docId);
+                    await updateDoc(docRef, driverData);
+                    showMessage('Chauffeur mis à jour avec succès.');
+                } else {
+                    // Add new driver
+                    await addDoc(driversCollection, driverData);
+                    showMessage('Chauffeur ajouté avec succès.');
+                }
+                driverModal.classList.add('hidden');
+                driverForm.reset();
+            } catch (error) {
+                console.error("Error adding/updating document: ", error);
+                showMessage("Erreur lors de l'opération.");
+            }
+        });
+
+        // Global functions for buttons
+        window.editDriver = async (id) => {
+            const docSnap = await getDocs(driversCollection);
+            const driver = docSnap.docs.find(d => d.id === id)?.data();
+            if (driver) {
+                modalTitle.textContent = 'Modifier le chauffeur';
+                submitButton.textContent = 'Modifier';
+                driverIdInput.value = id;
+                document.getElementById('driver-name').value = driver.name;
+                document.getElementById('driver-contact').value = driver.contact || '';
+                document.getElementById('license-expiration-date').value = driver['license-date'];
+                assignedVehicleSelect.value = driver.assignedVehicleId || '';
+                
+                driverModal.classList.remove('hidden');
+            } else {
+                showMessage("Chauffeur non trouvé.");
+            }
+        };
+
+        // Show the delete confirmation modal
+        window.showDeleteModal = (id) => {
+            confirmDeleteButton.dataset.docId = id; // Store the ID on the button
+            deleteModal.classList.remove('hidden');
+        };
+
+        // Handle the deletion
+        confirmDeleteButton.addEventListener('click', async () => {
+            const id = confirmDeleteButton.dataset.docId;
+            try {
+                await deleteDoc(doc(driversCollection, id));
+                showMessage('Chauffeur supprimé avec succès.');
+                deleteModal.classList.add('hidden');
+            } catch (error) {
+                console.error("Error removing document: ", error);
+                showMessage("Erreur lors de la suppression.");
+                deleteModal.classList.add('hidden');
+            }
+        });
+        
+        // Hide modals when "Cancel" buttons are clicked
+        document.getElementById('cancel-add-button').addEventListener('click', () => {
+            driverModal.classList.add('hidden');
+        });
+        
+        cancelDeleteButton.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+        });
+
+        // Start the application
+        signInAndFetch();
+    </script>
+</body>
+</html>
