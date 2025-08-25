@@ -418,7 +418,7 @@ async function deleteDriver(id) {
         const driver = dataManager.drivers.find(d => d.id === id);
         if (driver && driver.assignedTruckId) {
             const truckRef = doc(trucksCollection, driver.assignedTruckId);
-            await setDoc(truckRef, { assignedDriverId: null }, { merge: true });
+            await setDoc(truckRef, { assignedTruckId: null }, { merge: true });
         }
         await deleteDoc(driverRef);
         showMessage('Chauffeur supprimé avec succès.', 'alert-success');
