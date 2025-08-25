@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports et analyses - Superviseur</title>
+    <!-- Chargement de la police 'Inter' depuis Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chargement de Tailwind CSS pour un style moderne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 antialiased text-gray-800">
+    <!-- Conteneur principal avec image d'arrière-plan et overlay -->
+    <div class="min-h-screen bg-cover bg-center flex items-center justify-center p-4" style="background-image: url('superviseur.jpg');">
+        <!-- Overlay semi-transparent pour améliorer la lisibilité du contenu -->
+        <div class="absolute inset-0 bg-black opacity-60 backdrop-blur-sm"></div>
+
+        <!-- Contenu de la page -->
+        <div class="relative w-full max-w-4xl bg-white/20 backdrop-blur-md rounded-xl shadow-2xl p-8">
+            <div class="flex justify-between items-center mb-6">
+                <a href="index.html" class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                    Retour au tableau de bord
+                </a>
+                <h1 class="text-3xl font-bold text-white drop-shadow-md">Rapports et analyses</h1>
+            </div>
+            <p class="text-white text-lg text-center mb-8">
+                Rapports détaillés sur la consommation de carburant et les performances des chauffeurs.
+            </p>
+            <div class="bg-white/30 backdrop-blur-md rounded-lg p-6 shadow-lg">
+                <!-- Section pour le rapport de consommation de carburant -->
+                <h2 class="text-xl font-semibold text-white mb-4">Consommation de carburant</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full table-auto">
+                        <thead>
+                            <tr class="text-left text-white/80">
+                                <th class="py-2 px-4">Véhicule</th>
+                                <th class="py-2 px-4">Distance totale (km)</th>
+                                <th class="py-2 px-4">Carburant consommé (L)</th>
+                                <th class="py-2 px-4">Conso. moyenne (L/100km)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-white/90">
+                            <tr>
+                                <td class="py-2 px-4">Renault Master</td>
+                                <td class="py-2 px-4">1520</td>
+                                <td class="py-2 px-4">120</td>
+                                <td class="py-2 px-4">7.89</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4">Peugeot Boxer</td>
+                                <td class="py-2 px-4">1100</td>
+                                <td class="py-2 px-4">95</td>
+                                <td class="py-2 px-4">8.64</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white/30 backdrop-blur-md rounded-lg p-6 shadow-lg mt-6">
+                <!-- Section pour le rapport de performance des chauffeurs -->
+                <h2 class="text-xl font-semibold text-white mb-4">Performance des chauffeurs</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full table-auto">
+                        <thead>
+                            <tr class="text-left text-white/80">
+                                <th class="py-2 px-4">Chauffeur</th>
+                                <th class="py-2 px-4">Distance totale (km)</th>
+                                <th class="py-2 px-4">Excès de vitesse</th>
+                                <th class="py-2 px-4">Note de conduite</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-white/90">
+                            <tr>
+                                <td class="py-2 px-4">Pierre Dubois</td>
+                                <td class="py-2 px-4">3200</td>
+                                <td class="py-2 px-4">2</td>
+                                <td class="py-2 px-4">4.5/5</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4">Marie Lefevre</td>
+                                <td class="py-2 px-4">2850</td>
+                                <td class="py-2 px-4">5</td>
+                                <td class="py-2 px-4">3.8/5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
